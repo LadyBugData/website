@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
-  const [stats, setStats] = useState({ products: 0, clients: 0 });
+  const [stats, setStats] = useState({ products: 0, clients: 0, jobs: 0 });
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -45,9 +45,14 @@ export default function AdminDashboard() {
         .from('clients')
         .select('*', { count: 'exact', head: true });
 
+      const { count: jobsCount } = await supabase
+        .from('jobs')
+        .select('*', { count: 'exact', head: true });
+
       setStats({
         products: productsCount || 0,
         clients: clientsCount || 0,
+        jobs: jobsCount || 0,
       });
     } catch (err) {
       console.error('Error fetching stats:', err);
@@ -69,7 +74,6 @@ export default function AdminDashboard() {
 
   return (
     <main className="bg-ladybug-bg min-h-screen">
-      {/* Admin Header */}
       <header className="bg-ladybug-dark text-white border-b border-slate-700 sticky top-0 z-50">
         <Container className="py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">Admin Panel</h1>
@@ -85,11 +89,9 @@ export default function AdminDashboard() {
         </Container>
       </header>
 
-      {/* Main Content */}
       <section className="py-12">
         <Container>
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -115,20 +117,36 @@ export default function AdminDashboard() {
               transition={{ delay: 0.2 }}
               className="bg-white rounded-xl border border-slate-300 p-8"
             >
+              <p className="text-sm text-ladybug-dark opacity-70 mb-2">Job Openings</p>
+              <p className="text-4xl font-bold text-ladybug-dark">{stats.jobs}</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-xl border border-slate-300 p-8"
+            >
               <p className="text-sm text-ladybug-dark opacity-70 mb-2">Status</p>
               <p className="text-4xl font-bold text-green-600">Live</p>
             </motion.div>
           </div>
 
-          {/* Navigation */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
+              { title: 'Manage Home Page', href: '/admin/home', desc: 'Edit hero, features, testimonials' },
+              { title: 'Manage Home Stats', href: '/admin/stats', desc: 'Edit organizations, uptime, support stats' },
               { title: 'Manage Products', href: '/admin/products', desc: 'Add, edit, delete products' },
               { title: 'Manage Clients', href: '/admin/clients', desc: 'Manage clinic testimonials' },
               { title: 'Manage Pricing', href: '/admin/pricing', desc: 'Update pricing tiers' },
-              { title: 'Home Page Content', href: '/admin/home', desc: 'Edit hero, stats, text' },
-              { title: 'Navigation Links', href: '/admin/navigation', desc: 'Manage header links' },
-              { title: 'Settings', href: '/admin/settings', desc: 'General settings' },
+              { title: 'Manage Jobs', href: '/admin/jobs', desc: 'Create and manage job openings' },
+              { title: 'Manage Contact Page', href: '/admin/contact', desc: 'Edit contact info & form' },
+              { title: 'Manage FAQs', href: '/admin/faqs', desc: 'Add and manage FAQ questions' },
+              { title: 'Manage Help Center', href: '/admin/help-center', desc: 'Manage departments & emails' },
+              { title: 'Manage Documentation', href: '/admin/documentation', desc: 'Create and edit articles' },
+              { title: 'Manage Pages', href: '/admin/pages', desc: 'Create careers, about pages' },
+              { title: 'Manage Navigation', href: '/admin/navigation', desc: 'Edit header & footer links' },
+              { title: 'Manage Policies', href: '/admin/policies', desc: 'Edit privacy, terms, cookie policies' },
             ].map((item, index) => (
               <motion.div
                 key={index}
